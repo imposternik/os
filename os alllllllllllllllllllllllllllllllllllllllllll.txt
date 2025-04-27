@@ -1,0 +1,842 @@
+EXPERIMENT NO. 3
+Title: System Calls
+Aim: To study and implement a C program to demonstrate the system calls for creation of 
+process (fork), to perform file operations such as Open, Close, Read, Write, etc.
+
+
+Program:
+#include <unistd.h>
+#include <stdio.h>
+#include <sys/types.h>
+#define MAX_COUNT 5
+void ChildProcess(void); /* child process prototype */
+void ParentProcess(void); /* parent process prototype */
+int main(void)
+{
+ pid_t pid;
+ pid = fork();
+ if (pid == 0)
+ ChildProcess();
+ else
+ ParentProcess();
+}
+void ChildProcess(void)
+{
+ int i;
+ for (i = 1; i <= MAX_COUNT; i++)
+ printf(" This line is from child, value = %d\n", i);
+ printf(" *** Child process is done ***\n");
+}
+void ParentProcess(void)
+{
+ int i;
+ for (i = 1; i <= MAX_COUNT; i++)
+ printf("This line is from parent, value = %d\n", i);
+
+ printf("*** Parent is done ***\n");
+}
+
+
+
+
+
+
+
+
+
+EXPERIMENT NO. 4
+Title: CPU Scheduling Algorithms
+i. Aim: To study and implement a C program to demonstrate First Come First Serve 
+(FCFS) CPU scheduling algorithm
+
+
+Program:
+/* FIFO PROCESS SCHEDULING */
+#include<stdio.h>
+ int main()
+{
+ int n,bt[20],wt[20],tat[20],avwt=0,avtat=0,i,j;
+ printf("Enter total number of processes(maximum 20):");
+ scanf("%d",&n);
+ printf("nEnter Process Burst Timen");
+ for(i=0;i<n;i++)
+ {
+ printf("P[%d]:",i+1);
+ scanf("%d",&bt[i]);
+ }
+ wt[0]=0; 
+ for(i=1;i<n;i++)
+ {
+ wt[i]=0;
+ for(j=0;j<i;j++)
+ wt[i]+=bt[j];
+ }
+ printf("nProcessttBurst TimetWaiting TimetTurnaround Time");
+ for(i=0;i<n;i++)
+ {
+ tat[i]=bt[i]+wt[i];
+ avwt+=wt[i];
+ avtat+=tat[i];
+Computer Department,YBIT Page 21
+ printf("nP[%d]tt%dtt%dtt%d",i+1,bt[i],wt[i],tat[i]);
+ }
+ avwt/=i;
+ avtat/=i;
+ printf("nnAverage Waiting Time:%d",avwt);
+ printf("nAverage Turnaround Time:%d",avtat);
+ return 0;
+}
+
+
+
+
+
+
+
+EXPERIMENT NO. 5
+Aim: To study and implement a C program to demonstrate Priority CPU scheduling 
+algorithm 
+#include<stdio.h>
+#include<conio.h>
+void main()
+{
+ int x,n,p[10],pp[10],pt[10],w[10],t[10],awt,atat,i;
+ printf("Enter the number of process : ");
+ scanf("%d",&n);
+ printf("\n Enter process : time priorities \n");
+ for(i=0;i<n;i++)
+ {
+ printf("\nProcess no %d : ",i+1);
+ scanf("%d %d",&pt[i],&pp[i]);
+ p[i]=i+1;
+ }
+ for(i=0;i<n-1;i++)
+ {
+ for(int j=i+1;j<n;j++)
+ {
+ if(pp[i]<pp[j])
+ {
+ x=pp[i];
+ pp[i]=pp[j];
+Computer Department,YBIT Page 23
+ pp[j]=x;
+ x=pt[i];
+ pt[i]=pt[j];
+ pt[j]=x;
+ x=p[i];
+ p[i]=p[j];
+ p[j]=x;
+ }
+ }
+}
+w[0]=0;
+awt=0;
+t[0]=pt[0];
+atat=t[0];
+for(i=1;i<n;i++)
+{
+ w[i]=t[i-1];
+ awt+=w[i];
+ t[i]=w[i]+pt[i];
+ atat+=t[i];
+}
+printf("\n\n Job \t Burst Time \t Wait Time \t Turn Around Time Priority \n");
+for(i=0;i<n;i++)
+ printf("\n %d \t\t %d \t\t %d \t\t %d \t\t %d \n",p[i],pt[i],w[i],t[i],pp[i]);
+awt/=n;
+atat/=n;
+Computer Department,YBIT Page 24
+printf("\n Average Wait Time : %d \n",awt);
+printf("\n Average Turn Around Time : %d \n",atat);
+getch();
+}
+Output:
+Enter the number of process : 4
+Enter process : time priorities
+Process no 1 : 3
+1
+Process no 2 : 4
+2
+Process no 3 : 5
+3
+Process no 4 : 6
+4
+Job Burst Time Wait Time Turn Around Time Priority
+4 6 0 6 4
+3 5 6 11 3
+2 4 11 15 2
+1 3 15 18 1
+Average Wait Time : 8
+Average Turn Around Time : 12
+
+
+
+
+
+
+
+EXPERIMENT NO. 6
+Title: To implement solution of Producer consumer problem through Semaphore
+
+
+Program:
+#include<stdio.h>
+#include<stdlib.h>
+int mutex=1,full=0,empty=3,x=0;
+int main()
+{
+int n;
+void producer();
+void consumer();
+int wait(int);
+int signal(int);
+printf("\n1.Producer\n2.Consumer\n3.Exit");
+while(1)
+{
+printf("\nEnter your choice:");
+Computer Department,YBIT Page 28
+scanf("%d",&n);
+switch(n)
+{
+case 1: if((mutex==1)&&(empty!=0))
+producer();
+else
+printf("Buffer is full!!");
+break;
+case 2: if((mutex==1)&&(full!=0))
+consumer();
+else
+printf("Buffer is empty!!");
+break;
+case 3:
+exit(0);
+break;
+}
+}
+return 0;
+}
+int wait(int s)
+{
+return (--s);
+}
+int signal(int s)
+{
+return(++s);
+}
+void producer()
+{
+mutex=wait(mutex);
+full=signal(full);
+empty=wait(empty);
+x++;
+printf("\nProducer produces the item %d",x);
+mutex=signal(mutex);
+}
+void consumer()
+{
+mutex=wait(mutex);
+full=wait(full);
+empty=signal(empty);
+printf("\nConsumer consumes item %d",x);
+x--;
+mutex=signal(mutex);
+}
+
+
+
+
+
+
+EXPERIMENT NO. 7
+Title: To Study Deadlock Avoidance using Banker’s Algorithm
+Aim: To study and implement Banker’s Algorithm.
+
+
+
+PROGRAM:
+#include<iostream.h>
+#include<stdio.h>
+#include<stdlib.h>
+#define max = 10; 
+void main()
+{
+int i, j, z,k, P, L, N ,B, lim; 
+int A[max], R[max], M[max] , S[max] ,W[max] , MAX[max]; 
+int RS[max],LS[max],CP[max]={0}; 
+do
+{
+cout<<"\HOW MANY PROCESSES DO YOU WANT? ";
+cin>>P;
+}while(P>max);
+cout<<"\nINSERT THE MULTEPLICITY OF THE RESOURCE: ";
+cin>>N;
+for(i=0;i<P;i++)
+{
+cout<<"\nHow many resource of process P"<<i;
+cin>>A[i];
+cout<<"\nhow many instances 0of process P "<<i;
+cin>>R[i];
+cout<<"\What is the max instances of a resource of Process P"<<i<<endl;
+cin>>M[i];
+cout<<"What is Allocated number of instances of resource of process P“<<i;
+cin>>S[i];
+}
+L=N;
+for(i=0; i<P; i++)
+L=L - A[i]; 
+for(i=0; i<P; i++)
+{
+if(R[i]<=L) //is secure?
+{
+RS[i]=M[i]-A[i]-R[i]; 
+LS[i]=L-R[i]; 
+}
+else 
+LS[i]=-1;
+W[i]=M[i]-S[i]; 
+Computer Department,YBIT Page 32
+cout<<"need="<<W[i]<<endl;
+}
+for(i=0; i<P; i++)
+MAX[i]=-1; //or 0???
+z=0;
+for(i=0; i<P; i++)
+{
+if(i==0)
+{
+for(j=0; j<P; j++)
+{
+if(LS[j]>=MAX[z])
+{
+MAX[z]=LS[j];
+CP[z]=j;
+lim=MAX[z];
+}
+}
+}
+else
+{
+for(j=0; j<P; j++)
+{
+if((LS[j]>=MAX[z])&&(LS[j]<lim))
+{
+MAX[z]=LS[j];
+CP[z]=j;
+lim=MAX[z];
+}
+}
+}
+z++;
+}
+}
+
+
+
+
+
+
+EXPERIMENT NO. 8
+Title: Memory allocation techniques
+Aim: To study and implement the following contiguous memory allocation techniques a) 
+First-fit b) Best-fit c) Worst-fit
+
+
+
+PROGRAM
+a)WORST-FIT
+#include<stdio.h>
+#include<conio.h>
+#define max 25
+void main()
+{
+int frag[max],b[max],f[max],i,j,nb,nf,temp;
+static int bf[max],ff[max];
+clrscr();
+printf("\n\tMemory Management Scheme - Worst Fit");
+printf("\nEnter the number of blocks:");
+scanf("%d",&nb);
+printf("Enter the number of files:");
+scanf("%d",&nf);
+printf("\nEnter the size of the blocks:-\n");
+for(i=1;i<=nb;i++)
+{
+printf("Block %d:",i);
+scanf("%d",&b[i]);
+}
+printf("Enter the size of the files :-\n");
+for(i=1;i<=nf;i++)
+{
+Computer Department,YBIT Page 34
+printf("File %d:",i);
+scanf("%d",&f[i]);
+}
+for(i=1;i<=nf;i++)
+{
+for(j=1;j<=nb;j++)
+{
+if(bf[j]!=1)
+{
+temp=b[j]-f[i];
+if(temp>=0)
+{
+ff[i]=j;
+break;
+}
+}
+}
+frag[i]=temp;
+bf[ff[i]]=1;
+}
+printf("\nFile_no:\tFile_size :\tBlock_no:\tBlock_size:\tFragement");
+for(i=1;i<=nf;i++)
+printf("\n%d\t\t%d\t\t%d\t\t%d\t\t%d",i,f[i],ff[i],b[ff[i]],frag[i]);
+getch();
+}
+INPUT
+Enter the number of blocks: 3
+Enter the number of files: 2
+Enter the size of the blocks:-
+Block 1: 5
+Block 2: 2
+Block 3: 7
+Enter the size of the files:-
+File 1: 1
+File 2: 4
+OUTPUT
+File No File Size Block No Block Size Fragment
+1 1 1 5 4
+2 4 3 7 3
+b) Best-fit
+#include<stdio.h>
+#include<conio.h>
+#define max 25
+void main()
+{
+int frag[max],b[max],f[max],i,j,nb,nf,temp,lowest=10000;
+static int bf[max],ff[max];
+clrscr();
+printf("\nEnter the number of blocks:");
+scanf("%d",&nb);
+Computer Department,YBIT Page 35
+printf("Enter the number of files:");
+scanf("%d",&nf);
+printf("\nEnter the size of the blocks:-\n");
+for(i=1;i<=nb;i++)
+{
+printf("Block %d:",i);
+scanf("%d",&b[i]);
+}
+printf("Enter the size of the files :-\n");
+for(i=1;i<=nf;i++)
+{
+printf("File %d:",i);
+scanf("%d",&f[i]);
+}
+for(i=1;i<=nf;i++)
+{
+for(j=1;j<=nb;j++)
+{
+if(bf[j]!=1)
+{
+temp=b[j]-f[i];
+if(temp>=0)
+if(lowest>temp)
+{
+ff[i]=j;
+lowest=temp;
+}
+}
+}
+frag[i]=lowest;
+bf[ff[i]]=1;
+lowest=10000;
+}
+printf("\nFile No\tFile Size \tBlock No\tBlock Size\tFragment");
+for(i=1;i<=nf && ff[i]!=0;i++)
+printf("\n%d\t\t%d\t\t%d\t\t%d\t\t%d",i,f[i],ff[i],b[ff[i]],frag[i]);
+getch();
+}
+INPUT
+Enter the number of blocks: 3
+Enter the number of files: 2
+Enter the size of the blocks:-
+Block 1: 5
+Block 2: 2
+Block 3: 7
+Enter the size of the files:-
+File 1: 1
+File 2: 4
+OUTPUT
+File No File Size Block No Block Size Fragment
+1 1 2 2 1
+Computer Department,YBIT Page 36
+2 4 1 5 1
+c) First-fit
+#include<stdio.h>
+void main()
+{
+ int bsize[10], psize[10], bno, pno, flags[10], allocation[10], i, j;
+ for(i = 0; i < 10; i++)
+ {
+ flags[i] = 0;
+ allocation[i] = -1;
+ }
+ printf("Enter no. of blocks: ");
+ scanf("%d", &bno);
+ printf("\nEnter size of each block: ");
+ for(i = 0; i < bno; i++)
+ scanf("%d", &bsize[i]);
+ printf("\nEnter no. of processes: ");
+ scanf("%d", &pno);
+ printf("\nEnter size of each process: ");
+ for(i = 0; i < pno; i++)
+ scanf("%d", &psize[i]);
+ for(i = 0; i < pno; i++) //allocation as per first fit
+ for(j = 0; j < bno; j++)
+ if(flags[j] == 0 && bsize[j] >= psize[i])
+ {
+ allocation[j] = i;
+ flags[j] = 1;
+ break;
+ }
+ //display allocation details
+ printf("\nBlock no.\tsize\t\tprocess no.\t\tsize");
+ for(i = 0; i < bno; i++)
+ {
+ printf("\n%d\t\t%d\t\t", i+1, bsize[i]);
+ if(flags[i] == 1)
+ printf("%d\t\t\t%d",allocation[i]+1,psize[allocation[i]]);
+ else
+ printf("Not allocated");
+ }
+}
+
+
+
+
+
+
+EXPERIMENT NO. 9
+Title: Page Replacement Algorithms
+Aim: To study and implement a C program to demonstrate page replacement algorithm for 
+memory management: LRU Algorithm.
+
+
+
+PROGRAM:
+#include<stdio.h>
+int findLRU(int time[], int n)
+{
+int i, minimum = time[0], pos = 0;
+for(i = 1; i < n; ++i){
+if(time[i] < minimum){
+minimum = time[i];
+pos = i;
+}
+}
+Computer Department,YBIT Page 40
+return pos;
+}
+int main()
+{
+ int no_of_frames, no_of_pages, frames[10], pages[30], counter = 0, time[10], flag1, flag2, i, j, 
+pos, faults = 0;
+printf("Enter number of frames: ");
+scanf("%d", &no_of_frames);
+printf("Enter number of pages: ");
+scanf("%d", &no_of_pages);
+printf("Enter reference string: ");
+ for(i = 0; i < no_of_pages; ++i)
+{
+ scanf("%d", &pages[i]);
+ }
+ 
+for(i = 0; i < no_of_frames; ++i)
+ {
+ frames[i] = -1;
+ }
+ 
+/*Under biggest for loop logic there are three conditions are there first one 
+for checking page is is in frame or not second one is inserting the page in in 
+frame where -1 are there, the third one for finding the lru
+So if the first condition occurred then flag 1 flag 2 to become one then the 
+control cannot go to the second or third condition ok.
+If we are in second condition when the flag 1 and flag 2 is 0 , so after 
+executing second condition flag 2 become 0. So that we cannot go to the 
+3rd condition.
+If first and second condition not execute then we can go to the third 
+condition.
+Conclusion flag 1 and flag 2 used for executing any one condition out of 3rd 
+condition.
+*/
+ for(i = 0; i < no_of_pages; ++i)
+{
+ flag1 = flag2 = 0;
+ 
+ for(j = 0; j < no_of_frames; ++j)
+{
+ if(frames[j] == pages[i])
+{
+ counter++;
+ time[j] = counter;
+ flag1 = flag2 = 1;
+ break;
+Computer Department,YBIT Page 41
+ }
+ }
+ 
+ if(flag1 == 0)
+{
+ for(j = 0; j < no_of_frames; ++j){
+ if(frames[j] == -1){
+ counter++;
+ faults++;
+ frames[j] = pages[i];
+ time[j] = counter;
+ flag2 = 1;
+ break;
+ }
+ }
+ }
+ 
+ if(flag2 == 0)
+{
+ pos = findLRU(time, no_of_frames);
+ counter++;
+ faults++;
+ frames[pos] = pages[i];
+ time[pos] = counter;
+ }
+ 
+ printf("\n");
+ 
+ for(j = 0; j < no_of_frames; ++j)
+{
+ printf("%d\t", frames[j]);
+ }
+}
+printf("\n\nTotal Page Faults = %d", faults);
+ 
+ return 0;
+}
+OUTPUT:
+Enter number of frames: 3
+Enter number of pages: 6
+Enter reference string: 5 7 5 6 7 3
+5 -1 -1
+Computer Department,YBIT Page 42
+5 7 -1
+5 7 -1
+5 7 6
+5 7 6
+3 7 6
+Total Page Faults = 4
+
+
+
+
+
+
+EXPERIMENT NO. 10
+Title: Disk scheduling
+Aim: To study and implement disk scheduling algorithms a) FCFS b) SSTF c) SCAN
+
+
+
+1) FCFS (First come first serve)
+
+Program:
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+ int RQ[100],i,n,TotalHeadMoment=0,initial;
+ printf("Enter the number of Requests\n");
+ scanf("%d",&n);
+ printf("Enter the Requests sequence\n");
+ for(i=0;i<n;i++)
+ scanf("%d",&RQ[i]);
+ printf("Enter initial head position\n");
+ scanf("%d",&initial);
+ 
+ // logic for FCFS disk scheduling
+ 
+ for(i=0;i<n;i++)
+ {
+ TotalHeadMoment=TotalHeadMoment+abs(RQ[i]-initial);
+ initial=RQ[i];
+ }
+ 
+ printf("Total head moment is %d",TotalHeadMoment);
+ return 0;
+ 
+}
+Output:
+Enter the number of Request
+8
+Enter the Requests Sequence
+95 180 34 119 11 123 62 64
+Enter initial head position
+Computer Department,YBIT Page 45
+50
+Total head movement is 644
+
+
+
+2. Shortest seek time first (SSTF)
+
+Program: 
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+ int RQ[100],i,n,TotalHeadMoment=0,initial,count=0;
+ printf("Enter the number of Requests\n");
+ scanf("%d",&n);
+Computer Department,YBIT Page 46
+ printf("Enter the Requests sequence\n");
+ for(i=0;i<n;i++)
+ scanf("%d",&RQ[i]);
+ printf("Enter initial head position\n");
+ scanf("%d",&initial);
+ 
+ // logic for sstf disk scheduling
+ 
+ /* loop will execute until all process is completed*/
+ while(count!=n)
+ {
+ int min=1000,d,index;
+ for(i=0;i<n;i++)
+ {
+ d=abs(RQ[i]-initial);
+ if(min>d)
+ {
+ min=d;
+ index=i;
+ }
+ 
+ }
+ TotalHeadMoment=TotalHeadMoment+min;
+ initial=RQ[index];
+ // 1000 is for max
+ // you can use any number
+ RQ[index]=1000;
+ count++;
+ }
+ 
+ printf("Total head movement is %d",TotalHeadMoment);
+ return 0;
+}
+Output:-
+Enter the number of Request
+8
+Enter Request Sequence
+95 180 34 119 11 123 62 64
+Enter initial head Position
+50
+Total head movement is 236
+
+
+
+
+
+3) Scan/ Elevator Disk scheduling
+
+Code:-
+#include<stdio.h>
+#include<stdlib.h>
+int main()
+{
+ int RQ[100],i,j,n,TotalHeadMoment=0,initial,size,move;
+Computer Department,YBIT Page 48
+ printf("Enter the number of Requests\n");
+ scanf("%d",&n);
+ printf("Enter the Requests sequence\n");
+ for(i=0;i<n;i++)
+ scanf("%d",&RQ[i]);
+ printf("Enter initial head position\n");
+ scanf("%d",&initial);
+ printf("Enter total disk size\n");
+ scanf("%d",&size);
+ printf("Enter the head movement direction for high 1 and for low 0\n");
+ scanf("%d",&move);
+ 
+ // logic for Scan disk scheduling
+ 
+ /*logic for sort the request array */
+ for(i=0;i<n;i++)
+ {
+ for(j=0;j<n-i-1;j++)
+ {
+ if(RQ[j]>RQ[j+1])
+ {
+ int temp;
+ temp=RQ[j];
+ RQ[j]=RQ[j+1];
+ RQ[j+1]=temp;
+ }
+ }
+ }
+ int index;
+ for(i=0;i<n;i++)
+ {
+ if(initial<RQ[i])
+ {
+ index=i;
+ break;
+ }
+ }
+ 
+ // if movement is towards high value
+ if(move==1)
+ {
+ for(i=index;i<n;i++)
+ {
+ TotalHeadMoment=TotalHeadMoment+abs(RQ[i]-initial);
+ initial=RQ[i];
+ }
+ // last movement for max size 
+ TotalHeadMoment=TotalHeadMoment+abs(size-RQ[i-1]-1);
+ initial = size-1;
+Computer Department,YBIT Page 49
+ for(i=index-1;i>=0;i--)
+ {
+ TotalHeadMoment=TotalHeadMoment+abs(RQ[i]-initial);
+ initial=RQ[i];
+ 
+ }
+ }
+ // if movement is towards low value
+ else
+ {
+ for(i=index-1;i>=0;i--)
+ {
+ TotalHeadMoment=TotalHeadMoment+abs(RQ[i]-initial);
+ initial=RQ[i];
+ }
+ // last movement for min size 
+ TotalHeadMoment=TotalHeadMoment+abs(RQ[i+1]-0);
+ initial =0;
+ for(i=index;i<n;i++)
+ {
+ TotalHeadMoment=TotalHeadMoment+abs(RQ[i]-initial);
+ initial=RQ[i];
+ 
+ }
+ }
+ 
+ printf("Total head movement is %d",TotalHeadMoment);
+ return 0;
+}
+Output:-
+Enter the number of Request
+8
+Enter the Requests Sequence
+95 180 34 119 11 123 62 64
+Enter initial head position
+50
+Enter total disk size
+200
+Enter the head movement direction for high 1 and for low 0
+1
+Total head movement is 337
