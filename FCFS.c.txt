@@ -1,0 +1,69 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Process {
+    int id;
+    int arrival;
+    int burst;
+    int waiting;
+    int turnaround;
+    int completion;
+};
+
+int compare(const void *a, const void *b) {
+    struct Process *p1 = (struct Process *)a;
+    struct Process *p2 = (struct Process *)b;
+    if (p1->arrival != p2->arrival) {
+        return p1->arrival - p2->arrival;
+    } else {
+        return p1->id - p2->id;
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the number of processes: ");
+    scanf("%d", &n);
+
+    struct Process processes[n];
+    for (int i = 0; i < n; i++) {
+        printf("Enter arrival time and burst time for process %d: ", i + 1);
+        processes[i].id = i;
+        scanf("%d %d", &processes[i].arrival, &processes[i].burst);
+    }
+
+    qsort(processes, n, sizeof(struct Process), compare);
+
+    int current_time = 0;
+    float total_waiting = 0, total_turnaround = 0;
+
+    for (int i = 0; i < n; i++) {
+        if (current_time < processes[i].arrival) {
+            current_time = processes[i].arrival;
+        }
+        processes[i].completion = current_time + processes[i].burst;
+        processes[i].turnaround = processes[i].completion - processes[i].arrival;
+        processes[i].waiting = processes[i].turnaround - processes[i].burst;
+
+        total_waiting += processes[i].waiting;
+        total_turnaround += processes[i].turnaround;
+
+        current_time = processes[i].completion;
+    }
+
+    printf("\nProcess\tArrival\tBurst\tWaiting\tTurnaround\tCompletion\n");
+    for (int i = 0; i < n; i++) {
+        printf("%d\t%d\t%d\t%d\t%d\t\t%d\n",
+               processes[i].id + 1,
+               processes[i].arrival,
+               processes[i].burst,
+               processes[i].waiting,
+               processes[i].turnaround,
+               processes[i].completion);
+    }
+
+    printf("\nAverage Waiting Time: %.2f\n", total_waiting / n);
+    printf("Average Turnaround Time: %.2f\n", total_turnaround / n);
+
+    return 0;
+}
